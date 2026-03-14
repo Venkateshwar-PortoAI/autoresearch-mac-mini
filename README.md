@@ -10,6 +10,32 @@ You give an AI coding agent (Claude, Codex, etc.) a small language model trainin
 
 The original [autoresearch](https://github.com/karpathy/autoresearch) by Andrej Karpathy requires an NVIDIA H100 GPU (~$30K). **This fork makes it work on your Mac Mini, MacBook, or any computer — no GPU required.**
 
+### How the loop works
+
+```mermaid
+flowchart LR
+    A["🧑 You\nstart agent\n& sleep"] --> B["🤖 Agent\nreads\nprogram.md"]
+    B --> C["✏️ Modify\ntrain.py"]
+    C --> D["🏋️ Train\n5 min"]
+    D --> E{"Improved?"}
+    E -- "✅ Yes" --> F["Keep"]
+    E -- "❌ No" --> G["Discard"]
+    F --> H["📈 Log &\nplot"]
+    G --> H
+    H --> C
+
+    style A fill:#1a1a2e,stroke:#e94560,color:#fff
+    style B fill:#16213e,stroke:#0f3460,color:#fff
+    style C fill:#16213e,stroke:#0f3460,color:#fff
+    style D fill:#16213e,stroke:#0f3460,color:#fff
+    style E fill:#0f3460,stroke:#e94560,color:#fff
+    style F fill:#1b4332,stroke:#2d6a4f,color:#fff
+    style G fill:#6a040f,stroke:#9d0208,color:#fff
+    style H fill:#16213e,stroke:#0f3460,color:#fff
+```
+
+**You sleep. The agent experiments. You wake up to results.** ~8 experiments/hour, ~60 overnight.
+
 ## What do I need?
 
 | Requirement | Details |
