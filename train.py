@@ -560,7 +560,7 @@ FINAL_LR_FRAC = 0.0# final LR as fraction of initial
 
 # Model size
 DEPTH = 3# number of transformer layers (smaller for no-GPU)
-DEVICE_BATCH_SIZE = 8# per-device batch size (reduce if OOM)
+DEVICE_BATCH_SIZE = 4# per-device batch size (reduce if OOM)
 
 # ---------------------------------------------------------------------------
 # Device helpers
