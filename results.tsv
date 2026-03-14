@@ -1,0 +1,2 @@
+commit	val_bpb	memory_gb	status	description
+441644f	1.723225	0.2	keep	baseline (Mac Mini M4, MPS, depth=4, float32)
