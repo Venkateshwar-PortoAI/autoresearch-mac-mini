@@ -1,5 +1,5 @@
 [project]
-name = "autoresearch-universal"
+name = "autoresearch-mac-mini"
 version = "0.1.0"
 description = "Autonomous pretraining research — runs on CUDA, Apple Silicon (MPS), or CPU"
 readme = "README.md"

@@ -1,4 +1,4 @@
-# autoresearch-universal
+# autoresearch-mac-mini
 
 **Fork of [karpathy/autoresearch](https://github.com/karpathy/autoresearch) that runs without an NVIDIA GPU.**
 
