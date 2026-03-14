@@ -48,20 +48,26 @@ flowchart LR
 
 > **Cost note:** The AI agent (Claude/Codex) uses API credits as it runs experiments. Expect ~$5-15 for an overnight run of ~60 experiments, depending on your provider and plan.
 
-## Baseline results (Mac Mini M4, MPS)
+## Results (Mac Mini M4, MPS)
 
-| Metric | Mac Mini (this fork) | H100 (upstream) |
-|--------|---------------------|-----------------|
-| **val_bpb** | **1.723** | ~0.998 |
-| training time | 300s (5 min) | 300s (5 min) |
-| model params | 11.5M | 50.3M |
-| tok/sec | ~18,000 | ~1,600,000 |
-| peak memory | 198 MB | ~44 GB |
-| steps completed | 96 | ~953 |
+![progress](progress.png)
 
-The val_bpb is higher (worse) than H100 — that's expected. An H100 is ~90x faster and runs a 4x larger model. **But the whole point of autoresearch is the agent optimizes for YOUR hardware.** Let the agent run overnight and it will find the best architecture for your Mac.
+**val_bpb: 1.73 → 1.47 (15% improvement)** in ~35 autonomous experiments.
 
-The [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) fork pushed val_bpb down to **1.294** on M4 Max and **1.353** on Mac Mini over long overnight runs. Similar results should be achievable here.
+| Metric | Baseline | After optimization | H100 (upstream) |
+|--------|----------|-------------------|-----------------|
+| **val_bpb** | 1.729 | **1.470** | ~0.998 |
+| model params | 11.5M | 10.7M | 50.3M |
+| depth | 4 | 3 | 8 |
+| batch size | 2^16 | 2^14 | 2^19 |
+| tok/sec | ~18,000 | ~18,000 | ~1,600,000 |
+| peak memory | 198 MB | 198 MB | ~44 GB |
+
+**Best config found by the agent:** DEPTH=3, TOTAL_BATCH=2^14, WARMDOWN=0.2, WEIGHT_DECAY=0.1, MATRIX_LR=0.035
+
+The agent discovered that on Mac Mini, **smaller models with more optimizer steps win** — depth 3 beats depth 4 because it fits more training steps into the 5-minute budget.
+
+The [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) fork pushed val_bpb down to **1.294** on M4 Max and **1.353** on Mac Mini over longer runs. More experiments should push our results further.
 
 ## Quick start
 
