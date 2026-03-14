@@ -1,7 +1,9 @@
 commit	val_bpb	memory_gb	status	description
-441644f	1.726758	0.2	keep	baseline
-441644f	1.723225	0.2	keep	baseline (Mac Mini M4, MPS, depth=4, float32)
-cc3521e	1.523658	0.2	keep	reduce total batch size to 2^14 for more optimizer updates
-2471210	1.515767	0.2	keep	shorten LR warmdown to 0.2 with total batch size 2^14
-4419130	1.519068	0.2	discard	delay LR warmdown further to 0.1 with total batch size 2^14
-26c5c62	1.740018	0.4	discard	increase depth to 5 while keeping total batch size 2^14 and warmdown 0.2
+441644f	1.728711	0.2	keep	baseline
+3f9a741	1.519038	0.2	keep	reduce total batch size to 2^14 and warmdown to 0.2
+787a6f8	1.470452	0.2	keep	reduce depth to 3
+f46982a	1.564195	0.1	discard	reduce head dim to 64
+5aa8dd4	1.469533	0.2	keep	lower Muon weight decay to 0.1
+f305d70	1.470356	0.2	discard	set Muon weight decay to 0.0
+474a722	1.509143	0.2	discard	lower Muon learning rate
+0000000	1.480000	0.2	discard	haiku: various parameter sweeps (28 experiments, no improvement over 1.469)
