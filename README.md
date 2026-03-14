@@ -1,8 +1,27 @@
 # autoresearch-mac-mini
 
-**Fork of [karpathy/autoresearch](https://github.com/karpathy/autoresearch) that runs without an NVIDIA GPU.**
+**Fork of [karpathy/autoresearch](https://github.com/karpathy/autoresearch) that runs on a Mac Mini — no NVIDIA GPU required.**
 
 Auto-detects your hardware and runs on **Apple Silicon (MPS)**, **CPU**, or **CUDA** — no code changes needed.
+
+## Baseline results (Mac Mini M4, MPS)
+
+| Metric | Mac Mini (this fork) | H100 (upstream) |
+|--------|---------------------|-----------------|
+| **val_bpb** | **1.723** | ~0.998 |
+| training time | 300s (5 min) | 300s (5 min) |
+| model params | 11.5M | 50.3M |
+| depth | 4 | 8 |
+| tok/sec | ~18,000 | ~1,600,000 |
+| peak memory | 198 MB | ~44 GB |
+| steps completed | 96 | ~953 |
+| batch size | 8 | 128 |
+| precision | float32 | bfloat16 |
+| torch.compile | no | yes |
+
+The val_bpb is higher (worse) than H100 — that's expected. An H100 is ~90x faster and runs a 4x larger model. **But the whole point of autoresearch is the agent optimizes for YOUR hardware.** Let the agent run overnight and it will find the best architecture for your Mac.
+
+The [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) fork pushed val_bpb down to **1.294** on M4 Max and **1.353** on Mac Mini over long overnight runs. Similar results should be achievable here.
 
 ## What changed from upstream
 
@@ -81,6 +100,14 @@ The defaults (DEPTH=4, BATCH_SIZE=8) are conservative starting points. The whole
 - **More memory available?** Increase `DEPTH` (6, 8) and `DEVICE_BATCH_SIZE` (16, 32)
 - **OOM errors?** Decrease `DEVICE_BATCH_SIZE` (4, 2) or `DEPTH` (2, 3)
 - **Want better results on small models?** Use [TinyStories dataset](https://huggingface.co/datasets/karpathy/tinystories-gpt4-clean) — lower entropy data produces more meaningful results at small scale
+
+## How it compares to other Mac forks
+
+| Fork | Backend | Key difference |
+|------|---------|---------------|
+| **This repo** | PyTorch + MPS | Minimal diff from upstream, auto-detects CUDA/MPS/CPU, works everywhere |
+| [autoresearch-macos](https://github.com/miolini/autoresearch-macos) | PyTorch + MPS | Similar approach, MPS-specific optimizations |
+| [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) | MLX (no PyTorch) | Full rewrite to Apple's MLX framework, fastest on Mac but bigger diff |
 
 ## Credits
 
