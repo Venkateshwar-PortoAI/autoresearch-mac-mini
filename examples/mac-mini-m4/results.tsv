@@ -1,0 +1,8 @@
+commit	val_bpb	memory_gb	status	description
+441644f	1.728711	0.2	keep	baseline
+3f9a741	1.519038	0.2	keep	reduce total batch size to 2^14 and warmdown to 0.2
+787a6f8	1.470452	0.2	keep	reduce depth to 3
+f46982a	1.564195	0.1	discard	reduce head dim to 64
+5aa8dd4	1.469533	0.2	keep	lower Muon weight decay to 0.1
+f305d70	1.470356	0.2	discard	set Muon weight decay to 0.0
+474a722	1.509143	0.2	discard	lower Muon learning rate
