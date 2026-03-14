@@ -41,30 +41,28 @@ def main():
     kept_bpb = valid.loc[kept_mask, "val_bpb"]
     best_bpb = kept_bpb.min() if len(kept_bpb) > 0 else baseline_bpb
 
-    # --- Plot ---
+    # --- Plot (matching Karpathy's style: white bg, green dots, clean) ---
     fig, ax = plt.subplots(figsize=(16, 8))
-    fig.patch.set_facecolor("#0d1117")
-    ax.set_facecolor("#0d1117")
 
     # Only plot points at or below baseline region
     below = valid[valid["val_bpb"] <= baseline_bpb + 0.0005]
 
-    # Discarded: faint dots
+    # Discarded: faint grey dots
     disc = below[below["status"] == "DISCARD"]
     ax.scatter(disc.index, disc["val_bpb"],
-               c="#555555", s=12, alpha=0.5, zorder=2, label="Discarded")
+               c="#cccccc", s=12, alpha=0.5, zorder=2, label="Discarded")
 
     # Kept: prominent green dots
     kept_v = below[below["status"] == "KEEP"]
     ax.scatter(kept_v.index, kept_v["val_bpb"],
-               c="#2ecc71", s=60, zorder=4, label="Kept",
-               edgecolors="white", linewidths=0.5)
+               c="#2ecc71", s=50, zorder=4, label="Kept",
+               edgecolors="black", linewidths=0.5)
 
     # Running best step line
     if len(kept_bpb) > 0:
         running_min = kept_bpb.cummin()
         ax.step(kept_idx, running_min, where="post", color="#27ae60",
-                linewidth=2.5, alpha=0.8, zorder=3, label="Running best")
+                linewidth=2, alpha=0.7, zorder=3, label="Running best")
 
     # Label each kept experiment
     for idx, bpb in zip(kept_idx, kept_bpb):
@@ -73,21 +71,17 @@ def main():
             desc = desc[:42] + "..."
         ax.annotate(desc, (idx, bpb),
                     textcoords="offset points",
-                    xytext=(6, 6), fontsize=7.5,
-                    color="#5dde8e", alpha=0.9,
+                    xytext=(6, 6), fontsize=8.0,
+                    color="#1a7a3a", alpha=0.9,
                     rotation=30, ha="left", va="bottom")
 
-    # Style
-    ax.set_xlabel("Experiment #", fontsize=12, color="white")
-    ax.set_ylabel("Validation BPB (lower is better)", fontsize=12, color="white")
+    # Style (clean white background, matching Karpathy's analysis.ipynb)
+    ax.set_xlabel("Experiment #", fontsize=12)
+    ax.set_ylabel("Validation BPB (lower is better)", fontsize=12)
     ax.set_title(f"Autoresearch Progress: {n_total} Experiments, {n_kept} Kept Improvements",
-                 fontsize=14, color="white", fontweight="bold")
-    ax.legend(loc="upper right", fontsize=9, facecolor="#161b22",
-              edgecolor="#30363d", labelcolor="white")
-    ax.grid(True, alpha=0.15, color="#30363d")
-    ax.tick_params(colors="white")
-    for spine in ax.spines.values():
-        spine.set_color("#30363d")
+                 fontsize=14)
+    ax.legend(loc="upper right", fontsize=9)
+    ax.grid(True, alpha=0.2)
 
     # Y-axis range
     if best_bpb < baseline_bpb:
@@ -95,7 +89,7 @@ def main():
         ax.set_ylim(best_bpb - margin, baseline_bpb + margin)
 
     plt.tight_layout()
-    plt.savefig(OUT_PATH, dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
+    plt.savefig(OUT_PATH, dpi=150, bbox_inches="tight")
     plt.close()
 
     improvement = baseline_bpb - best_bpb
