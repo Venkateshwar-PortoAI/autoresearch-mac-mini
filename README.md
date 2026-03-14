@@ -10,17 +10,17 @@ You give an AI coding agent (Claude, Codex, etc.) a small language model trainin
 
 The original [autoresearch](https://github.com/karpathy/autoresearch) by Andrej Karpathy requires an NVIDIA H100 GPU (~$30K). **This fork makes it work on your Mac Mini, MacBook, or any computer — no GPU required.**
 
-## How it works
+### How the loop works
 
 ```mermaid
-flowchart TD
-    A["🧑 You: start the AI agent\nand go to sleep"] --> B["🤖 AI Agent reads program.md\n(instructions for research)"]
-    B --> C["✏️ Agent modifies train.py\n(change model size, learning rate, etc.)"]
-    C --> D["🏋️ Train for 5 minutes\n(on your Mac Mini via MPS)"]
-    D --> E{"📊 Did val_bpb\nimprove?"}
-    E -- "✅ Yes (lower)" --> F["Keep the change\nlog to results.tsv"]
-    E -- "❌ No (same/worse)" --> G["Discard & revert\nlog to results.tsv"]
-    F --> H["📈 Update progress.png"]
+flowchart LR
+    A["🧑 You\nstart agent\n& sleep"] --> B["🤖 Agent\nreads\nprogram.md"]
+    B --> C["✏️ Modify\ntrain.py"]
+    C --> D["🏋️ Train\n5 min"]
+    D --> E{"Improved?"}
+    E -- "✅ Yes" --> F["Keep"]
+    E -- "❌ No" --> G["Discard"]
+    F --> H["📈 Log &\nplot"]
     G --> H
     H --> C
 
@@ -34,9 +34,7 @@ flowchart TD
     style H fill:#16213e,stroke:#0f3460,color:#fff
 ```
 
-**You sleep. The agent experiments. You wake up to results.**
-
-Each experiment takes ~7 minutes (5 min training + 2 min eval). Overnight (~8 hours) = ~60 experiments, all autonomous.
+**You sleep. The agent experiments. You wake up to results.** ~8 experiments/hour, ~60 overnight.
 
 ## What do I need?
 
