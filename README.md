@@ -54,9 +54,9 @@ We ran experiments on a Mac Mini M4 using different AI agents. Full results, cha
 
 | Hardware | Agent | Experiments | Baseline | Best val_bpb | Improvement | Details |
 |----------|-------|-------------|----------|-------------|-------------|---------|
-| Mac Mini M4 (16GB) | Claude Haiku + Codex | 10 | 1.729 | **1.470** | 15% | [results](examples/mac-mini-m4/) |
+| Mac Mini M4 (16GB) | Claude Haiku + Codex | 10 | 1.729 | **1.470** | 15% | [results](examples/mac-mini-m4-haiku/) |
 
-![progress](examples/mac-mini-m4/progress.png)
+![progress](examples/mac-mini-m4-haiku/progress.png)
 
 **Key finding:** On Mac Mini, **smaller models with more optimizer steps win.** The agent discovered that depth 3 beats depth 4 — fewer layers = faster steps = more updates in the 5-minute budget.
 

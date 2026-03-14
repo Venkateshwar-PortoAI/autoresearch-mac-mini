@@ -15,7 +15,7 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "autoresearch-nogpu"
+name = "autoresearch-mac-mini"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

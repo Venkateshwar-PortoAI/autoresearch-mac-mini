@@ -1,7 +1,7 @@
-# Mac Mini M4 — Example Run
+# Mac Mini M4 + Claude Haiku — Example Run
 
 **Hardware:** Mac Mini M4, 16GB unified memory, macOS
-**Agent:** Claude Haiku + Codex
+**Agent:** Claude Haiku
 **Experiments:** 10
 **Best val_bpb:** 1.469533 (from baseline 1.728)
 

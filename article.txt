@@ -1,0 +1,45 @@
+I Ran Karpathy's Autoresearch on a Mac Mini with Claude Haiku
+
+Karpathy's autoresearch needs an H100 ($30K). I made it run on a Mac Mini ($599) with Claude Haiku ($0.25/hr).
+
+The idea is simple: give an AI agent a small LLM training setup, let it experiment autonomously. It modifies the code, trains for 5 minutes, checks if the result improved, keeps or discards, repeats. You go to sleep, wake up to a better model.
+
+The Setup
+Mac Mini M4, 16GB RAM. PyTorch with MPS (Metal Performance Shaders). Claude Haiku as the research agent. Float32, no mixed precision.
+
+I forked autoresearch, replaced Flash Attention 3 with PyTorch SDPA, added auto device detection, and tuned the defaults for small compute. One repo that runs on CUDA, MPS, or CPU.
+
+What Haiku Did
+Starting from the default config (val_bpb 1.729), Haiku ran 10 experiments autonomously.
+
+Experiment 1 — Baseline: 1.729. The starting point.
+Experiment 2 — Smaller batch size: 1.519. Huge jump. Haiku figured out that on slow hardware, smaller batches mean more optimizer steps in 5 minutes. More steps > bigger batches.
+Experiment 3 — Shallower model: 1.470. Another big win. Depth 3 instead of 4. Fewer layers = faster steps = more updates.
+Experiment 4 — Lower weight decay: 1.470. Tiny improvement from 0.2 to 0.1.
+Experiments 5-10 — All discarded. Haiku tried smaller head dim, different LR schedules, different adam betas, zero weight decay. Nothing beat 1.470.
+
+The Key Insight
+On slow hardware, smaller models win. Not because they're architecturally better, but because they're faster per step. In a fixed 5-minute budget, a 3-layer model that does 360 steps beats a 4-layer model that does 96 steps.
+
+The autoresearch-mlx fork discovered the same thing on M4 Max. Haiku rediscovered it independently in 10 experiments.
+
+What Surprised Me
+Haiku is good enough. The cheapest Claude model found the winning direction in just 3 experiments.
+
+The agent gets stuck at local optima. After finding depth=3 + batch 2^14, incremental tweaks couldn't improve further. More radical architectural changes might break through.
+
+Agents don't loop well. Both Codex and Claude stopped after a few experiments instead of running indefinitely. True overnight autonomous runs are still the hard part.
+
+The Numbers
+val_bpb: 1.729 → 1.470 (H100 gets ~0.998)
+depth: 4 → 3
+batch size: 2^16 → 2^14
+params: 11.5M → 10.7M
+memory: 198 MB
+
+15% improvement. Zero human intervention. $2 in API costs.
+
+Try It
+github.com/Venkateshwar-PortoAI/autoresearch-mac-mini
+
+Clone it, point any AI agent at program.md, and leave it running. Works on any Mac, Linux box, or GPU machine. Built on @karpathy's autoresearch.
