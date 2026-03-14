@@ -63,19 +63,43 @@ Compute dtype: torch.float32
 
 ## Running the agent
 
-Same as upstream. Spin up Claude Code, Codex, or any coding agent:
+Same as upstream. Spin up Claude Code, Codex, or any coding agent in this directory:
 
 ```
 Hi have a look at program.md and let's kick off a new experiment! let's do the setup first.
 ```
 
+The agent will modify `train.py`, run experiments, keep/discard based on val_bpb, and repeat autonomously. Leave it running overnight for ~60-100 experiments.
+
+### Watching progress
+
+**Sticky terminal header** — the agent can use `run_experiment.py` to show live progress:
+```bash
+uv run run_experiment.py "reduce depth to 3"
+```
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  EXPERIMENT #4  ⏳ RUNNING    Testing: reduce depth to 3
+  Best: 1.524  │  Done: 3  │  Kept: 2  │  Discarded: 1  │  Crashed: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Progress chart** — auto-generates after each experiment:
+```bash
+uv run plot_progress.py
+```
+
+![progress](progress.png)
+
 ## Project structure
 
 ```
-prepare.py      — constants, data prep + runtime utilities (do not modify)
-train.py        — model, optimizer, training loop (agent modifies this)
-program.md      — agent instructions
-pyproject.toml  — dependencies
+prepare.py         — constants, data prep + runtime utilities (do not modify)
+train.py           — model, optimizer, training loop (agent modifies this)
+program.md         — agent instructions
+run_experiment.py  — experiment runner with sticky terminal header
+plot_progress.py   — auto-generates progress.png from results.tsv
+pyproject.toml     — dependencies
 ```
 
 ## Platform-specific notes
@@ -103,11 +127,13 @@ The defaults (DEPTH=4, BATCH_SIZE=8) are conservative starting points. The whole
 
 ## How it compares to other Mac forks
 
-| Fork | Backend | Key difference |
-|------|---------|---------------|
-| **This repo** | PyTorch + MPS | Minimal diff from upstream, auto-detects CUDA/MPS/CPU, works everywhere |
-| [autoresearch-macos](https://github.com/miolini/autoresearch-macos) | PyTorch + MPS | Similar approach, MPS-specific optimizations |
-| [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) | MLX (no PyTorch) | Full rewrite to Apple's MLX framework, fastest on Mac but bigger diff |
+| | This repo | [autoresearch-macos](https://github.com/miolini/autoresearch-macos) | [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) |
+|---|---|---|---|
+| **Backend** | PyTorch + MPS | PyTorch + MPS | MLX (no PyTorch) |
+| **Platforms** | CUDA, MPS, CPU | macOS only | macOS only |
+| **CUDA support** | Yes (auto-detect) | No (crashes on non-Mac) | No |
+| **Progress UI** | Sticky terminal header + auto chart | None | None |
+| **Diff from upstream** | Minimal | Minimal | Full rewrite |
 
 ## Credits
 
