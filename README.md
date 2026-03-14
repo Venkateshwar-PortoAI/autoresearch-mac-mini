@@ -4,6 +4,24 @@
 
 Auto-detects your hardware and runs on **Apple Silicon (MPS)**, **CPU**, or **CUDA** — no code changes needed.
 
+## What is this?
+
+You give an AI coding agent (Claude, Codex, etc.) a small language model training setup and let it **experiment autonomously overnight**. The agent modifies the training code, trains for 5 minutes, checks if the model improved, keeps or discards the change, and repeats. You wake up to a log of experiments and a better model — all done while you slept.
+
+The original [autoresearch](https://github.com/karpathy/autoresearch) by Andrej Karpathy requires an NVIDIA H100 GPU (~$30K). **This fork makes it work on your Mac Mini, MacBook, or any computer — no GPU required.**
+
+## What do I need?
+
+| Requirement | Details |
+|------------|---------|
+| **Computer** | Any Mac with Apple Silicon (M1/M2/M3/M4), or any Linux/Windows with Python |
+| **RAM** | 8 GB minimum (the model uses ~200 MB). 16 GB recommended |
+| **Disk** | ~2 GB for training data |
+| **Python** | 3.10 or newer |
+| **AI agent** | Claude Code, Codex, or any coding agent (this is what runs the experiments for you) |
+
+> **Cost note:** The AI agent (Claude/Codex) uses API credits as it runs experiments. Expect ~$5-15 for an overnight run of ~60 experiments, depending on your provider and plan.
+
 ## Baseline results (Mac Mini M4, MPS)
 
 | Metric | Mac Mini (this fork) | H100 (upstream) |
@@ -11,47 +29,31 @@ Auto-detects your hardware and runs on **Apple Silicon (MPS)**, **CPU**, or **CU
 | **val_bpb** | **1.723** | ~0.998 |
 | training time | 300s (5 min) | 300s (5 min) |
 | model params | 11.5M | 50.3M |
-| depth | 4 | 8 |
 | tok/sec | ~18,000 | ~1,600,000 |
 | peak memory | 198 MB | ~44 GB |
 | steps completed | 96 | ~953 |
-| batch size | 8 | 128 |
-| precision | float32 | bfloat16 |
-| torch.compile | no | yes |
 
 The val_bpb is higher (worse) than H100 — that's expected. An H100 is ~90x faster and runs a 4x larger model. **But the whole point of autoresearch is the agent optimizes for YOUR hardware.** Let the agent run overnight and it will find the best architecture for your Mac.
 
 The [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) fork pushed val_bpb down to **1.294** on M4 Max and **1.353** on Mac Mini over long overnight runs. Similar results should be achievable here.
 
-## What changed from upstream
-
-| Change | Why |
-|--------|-----|
-| FA3 → PyTorch SDPA | Flash Attention 3 is CUDA-only. SDPA works everywhere with automatic backend selection |
-| Auto device detection | `cuda` → `mps` → `cpu`, no hardcoded device |
-| `torch.compile` disabled on MPS | Crashes or produces wrong results on Metal |
-| Float32 on MPS/CPU | bfloat16 autocast is unreliable on Metal. Float32 is slower but correct |
-| Smaller defaults | DEPTH=4, BATCH_SIZE=8, TOTAL_BATCH=2^16, WINDOW="L" (per Karpathy's own recommendations for small compute) |
-| Reduced eval tokens | Faster validation on slower hardware |
-| Removed `kernels` dependency | CUDA-only package, not needed with SDPA fallback |
-
-Everything else is identical to upstream — same model architecture, same Muon+AdamW optimizer, same `program.md` agent loop, same metric (val_bpb).
-
 ## Quick start
-
-**Requirements:** Python 3.10+, [uv](https://docs.astral.sh/uv/). Any Mac, Linux box, or GPU machine.
 
 ```bash
 # 1. Install uv project manager (if you don't already have it)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# 2. Install dependencies
+# 2. Clone this repo
+git clone https://github.com/Venkateshwar-PortoAI/autoresearch-mac-mini.git
+cd autoresearch-mac-mini
+
+# 3. Install dependencies
 uv sync
 
-# 3. Download data and train tokenizer (one-time, ~2 min)
+# 4. Download data and train tokenizer (one-time, ~2 min)
 uv run prepare.py
 
-# 4. Manually run a single training experiment (~5 min)
+# 5. Run a single training experiment to verify (~7 min)
 uv run train.py
 ```
 
@@ -61,69 +63,95 @@ Device: mps
 Compute dtype: torch.float32
 ```
 
-## Running the agent
+If you see `val_bpb: X.XXX` at the end, everything works. You're ready to go autonomous.
 
-Same as upstream. Spin up Claude Code, Codex, or any coding agent in this directory:
+## Running the agent (overnight mode)
 
+Open your terminal in this directory and start your AI agent:
+
+**Claude Code:**
+```bash
+claude
+# then type: Hi have a look at program.md and let's kick off a new experiment! let's do the setup first.
 ```
-Hi have a look at program.md and let's kick off a new experiment! let's do the setup first.
+
+**Codex:**
+```bash
+codex
+# then type: Hi have a look at program.md and let's kick off a new experiment! let's do the setup first.
 ```
 
-The agent will modify `train.py`, run experiments, keep/discard based on val_bpb, and repeat autonomously. Leave it running overnight for ~60-100 experiments.
+Then **leave it running overnight**. The agent will:
+1. Modify `train.py` with an idea (change model size, learning rate, etc.)
+2. Train for 5 minutes
+3. Check if val_bpb improved
+4. Keep or discard the change
+5. Repeat forever until you stop it
+
+**What to expect:**
+- ~8 experiments per hour (~7 min each: 5 min training + 2 min eval)
+- ~60 experiments overnight (8 hours)
+- The agent finds hardware-optimal configs automatically
+- Check `results.tsv` anytime to see progress
 
 ### Watching progress
 
-**Sticky terminal header** — the agent can use `run_experiment.py` to show live progress:
-```bash
-uv run run_experiment.py "reduce depth to 3"
-```
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  EXPERIMENT #4  ⏳ RUNNING    Testing: reduce depth to 3
-  Best: 1.524  │  Done: 3  │  Kept: 2  │  Discarded: 1  │  Crashed: 0
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-**Progress chart** — auto-generates after each experiment:
+**Progress chart** — run anytime to see how experiments are going:
 ```bash
 uv run plot_progress.py
+# opens progress.png
 ```
 
 ![progress](progress.png)
 
+**Sticky terminal header** — the agent can use this for live status:
+```bash
+uv run run_experiment.py "reduce depth to 3"
+```
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  EXPERIMENT #4  ⏳ RUNNING    Testing: reduce depth to 3
+  Best: 1.524  │  Done: 3  │  Kept: 2  │  Discarded: 1  │  Crashed: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
 ## Project structure
 
 ```
-prepare.py         — constants, data prep + runtime utilities (do not modify)
-train.py           — model, optimizer, training loop (agent modifies this)
-program.md         — agent instructions
+prepare.py         — data prep + runtime utilities (do not modify)
+train.py           — model + training loop (the AI agent modifies this)
+program.md         — instructions that tell the AI agent what to do
 run_experiment.py  — experiment runner with sticky terminal header
-plot_progress.py   — auto-generates progress.png from results.tsv
-pyproject.toml     — dependencies
+plot_progress.py   — auto-generates progress.png chart
+results.tsv        — log of all experiments (created during runs)
 ```
 
-## Platform-specific notes
+## Troubleshooting
 
-### Apple Silicon (MPS)
-- Runs in float32 (no mixed precision). Slower than CUDA but works out of the box.
-- `torch.compile` is disabled. All computation is eager mode.
-- The agent will find hardware-optimal configs — smaller models that train faster tend to win on Mac because more optimizer steps fit in the 5-minute budget.
+| Problem | Fix |
+|---------|-----|
+| `uv: command not found` | Install uv: `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| `MPS not available` | Update to macOS 13+ and PyTorch 2.0+. Intel Macs don't have MPS — it'll fall back to CPU |
+| Out of memory (OOM) | Edit `train.py`: lower `DEVICE_BATCH_SIZE` to 4 or 2, or lower `DEPTH` to 2 or 3 |
+| Training very slow | Expected on CPU. MPS is ~10-20x faster. Consider leaving it overnight |
+| `prepare.py` download fails | Check internet connection. Data is ~2 GB from HuggingFace |
+| Agent stops/crashes | Just restart the agent. It reads `results.tsv` and picks up where it left off |
 
-### CPU
-- Slowest option but works anywhere (Linux servers, CI, etc.).
-- Consider lowering `DEVICE_BATCH_SIZE` further if memory is tight.
+## What changed from upstream
 
-### CUDA
-- If you have an NVIDIA GPU, this fork auto-detects it and uses FA3 (if `kernels` is installed) + torch.compile + bfloat16 autocast — same as upstream.
-- For full CUDA performance, install the `kernels` package: `uv pip install kernels`
+| Change | Why |
+|--------|-----|
+| FA3 → PyTorch SDPA | Flash Attention 3 is CUDA-only. SDPA works everywhere |
+| Auto device detection | `cuda` → `mps` → `cpu`, no hardcoded device |
+| `torch.compile` disabled on MPS | Crashes on Metal |
+| Float32 on MPS/CPU | bfloat16 is unreliable on Metal. Slower but correct |
+| Smaller defaults | DEPTH=4, BATCH=8 (per Karpathy's own small-compute recommendations) |
+| Reduced eval tokens | Faster validation on slower hardware |
+| Removed `kernels` dependency | CUDA-only package |
+| `run_experiment.py` | Sticky terminal header showing experiment progress |
+| `plot_progress.py` | Auto-generates progress chart from results |
 
-## Tuning for your hardware
-
-The defaults (DEPTH=4, BATCH_SIZE=8) are conservative starting points. The whole point of autoresearch is the agent optimizes these. But if you want to manually tune:
-
-- **More memory available?** Increase `DEPTH` (6, 8) and `DEVICE_BATCH_SIZE` (16, 32)
-- **OOM errors?** Decrease `DEVICE_BATCH_SIZE` (4, 2) or `DEPTH` (2, 3)
-- **Want better results on small models?** Use [TinyStories dataset](https://huggingface.co/datasets/karpathy/tinystories-gpt4-clean) — lower entropy data produces more meaningful results at small scale
+Everything else is identical to upstream — same model architecture, same Muon+AdamW optimizer, same agent loop, same metric (val_bpb).
 
 ## How it compares to other Mac forks
 
