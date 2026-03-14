@@ -48,26 +48,23 @@ flowchart LR
 
 > **Cost note:** The AI agent (Claude/Codex) uses API credits as it runs experiments. Expect ~$5-15 for an overnight run of ~60 experiments, depending on your provider and plan.
 
-## Results (Mac Mini M4, MPS)
+## Our results
 
-![progress](progress.png)
+We ran experiments on a Mac Mini M4 using different AI agents. Full results, charts, and configs are in the [`examples/`](examples/) folder.
 
-**val_bpb: 1.73 → 1.47 (15% improvement)** in ~35 autonomous experiments.
+| Hardware | Agent | Experiments | Baseline | Best val_bpb | Improvement | Details |
+|----------|-------|-------------|----------|-------------|-------------|---------|
+| Mac Mini M4 (16GB) | Claude Haiku + Codex | 10 | 1.729 | **1.470** | 15% | [results](examples/mac-mini-m4/) |
 
-| Metric | Baseline | After optimization | H100 (upstream) |
-|--------|----------|-------------------|-----------------|
-| **val_bpb** | 1.729 | **1.470** | ~0.998 |
-| model params | 11.5M | 10.7M | 50.3M |
-| depth | 4 | 3 | 8 |
-| batch size | 2^16 | 2^14 | 2^19 |
-| tok/sec | ~18,000 | ~18,000 | ~1,600,000 |
-| peak memory | 198 MB | 198 MB | ~44 GB |
+![progress](examples/mac-mini-m4/progress.png)
 
-**Best config found by the agent:** DEPTH=3, TOTAL_BATCH=2^14, WARMDOWN=0.2, WEIGHT_DECAY=0.1, MATRIX_LR=0.035
+**Key finding:** On Mac Mini, **smaller models with more optimizer steps win.** The agent discovered that depth 3 beats depth 4 — fewer layers = faster steps = more updates in the 5-minute budget.
 
-The agent discovered that on Mac Mini, **smaller models with more optimizer steps win** — depth 3 beats depth 4 because it fits more training steps into the 5-minute budget.
+**Best config found:** DEPTH=3, TOTAL_BATCH=2^14, WARMDOWN=0.2, WEIGHT_DECAY=0.1
 
-The [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) fork pushed val_bpb down to **1.294** on M4 Max and **1.353** on Mac Mini over longer runs. More experiments should push our results further.
+> Your results will differ — the agent optimizes for YOUR specific hardware. The [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) fork pushed val_bpb down to **1.294** on M4 Max over longer runs.
+>
+> **Have results to share?** Add your own `examples/your-hardware/` folder and open a PR!
 
 ## Quick start
 
