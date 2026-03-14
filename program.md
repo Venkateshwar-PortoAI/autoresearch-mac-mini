@@ -96,10 +96,10 @@ LOOP FOREVER:
 1. Look at the git state: the current branch/commit we're on
 2. Tune `train.py` with an experimental idea by directly hacking the code.
 3. git commit
-4. Run the experiment: `uv run run_experiment.py "short description of change"` (shows sticky header with progress, logs to run.log). Alternatively use `uv run train.py > run.log 2>&1` if you prefer silent mode.
+4. Run the experiment: `uv run train.py > run.log 2>&1` (redirect everything — do NOT use tee or let output flood your context)
 5. Read out the results: `grep "^val_bpb:\|^peak_memory_mb:" run.log`
 6. If the grep output is empty, the run crashed. Run `tail -n 50 run.log` to read the Python stack trace and attempt a fix. If you can't get things to work after more than a few attempts, give up.
-7. Record the results in the tsv (NOTE: do not commit the results.tsv file, leave it untracked by git)
+7. **IMPORTANT — ALWAYS log to results.tsv.** Append a new line with: commit hash, val_bpb, memory_gb, status (keep/discard/crash), description. Example: `echo -e "abc1234\t1.523\t0.2\tkeep\treduce batch size" >> results.tsv`. You MUST do this after EVERY experiment, no exceptions.
 8. Update the progress chart: `uv run plot_progress.py` (generates progress.png from results.tsv)
 9. If val_bpb improved (lower), you "advance" the branch, keeping the git commit
 10. If val_bpb is equal or worse, you git reset back to where you started
