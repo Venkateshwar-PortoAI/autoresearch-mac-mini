@@ -84,6 +84,42 @@ We ran experiments on a Mac Mini M4 using different AI agents. Full results, cha
 
 > **Have results to share?** Add your own `examples/your-hardware/` folder and open a PR!
 
+### Future experiments to try
+
+We've updated `program.md` with a research strategy based on our learnings. Here's what we'd like to try next:
+
+**Better research prompts:**
+- [ ] Run with the improved `program.md` (now includes "never repeat failures", "50/50 hyperparams vs architecture", "stuck protocol")
+- [ ] Compare results before/after the prompt improvement
+- [ ] Try a two-phase approach: cheap model (Haiku) for hyperparams, smart model (Opus/Sonnet) for architectural changes
+
+**Architectural changes the agents never tried:**
+- [ ] Different activation functions (GeLU, SiLU instead of ReluSquared)
+- [ ] Different MLP ratios (3x or 6x instead of 4x)
+- [ ] Remove value embeddings entirely (simpler model, faster steps)
+- [ ] Change softcap value (15 → 30) or remove it
+- [ ] Different rotary embedding base (10000 → 50000)
+- [ ] Weight tying (share embedding and unembedding weights)
+- [ ] Remove resid_lambdas / x0_lambdas
+
+**Performance improvements:**
+- [ ] Enable float16 on MPS (risky but could 2x throughput)
+- [ ] Try torch.compile on CPU backend for the optimizer
+- [ ] TinyStories dataset (lower entropy → better results on small models)
+
+**More hardware:**
+- [ ] MacBook Air M1 (8GB) — how low can you go?
+- [ ] MacBook Pro M4 Max — compare with MLX fork's 1.294
+- [ ] Linux CPU-only — does it even converge?
+- [ ] Older Intel Mac — CPU fallback test
+
+**Agent comparisons:**
+- [ ] Claude Opus vs Sonnet vs Haiku (same hardware, same program.md)
+- [ ] Codex vs Claude vs Gemini
+- [ ] Cost per val_bpb improvement by agent
+
+Contributions welcome — pick any of these and open a PR!
+
 ## Quick start
 
 ```bash
