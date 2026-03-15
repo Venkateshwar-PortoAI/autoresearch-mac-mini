@@ -64,8 +64,24 @@ We ran experiments on a Mac Mini M4 using different AI agents. Full results, cha
 - **Smaller batches are the biggest lever.** Batch 2^14 or 2^13 beats 2^16 by a large margin.
 - **Haiku found a great config in 10 experiments. Codex explored 115 experiments and found a comparable result.** Different agents, similar conclusions.
 
-> Your results will differ — the agent optimizes for YOUR specific hardware. The [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) fork pushed val_bpb down to **1.294** on M4 Max over longer runs.
->
+### What we learned about AI agents as researchers
+
+> These findings are specific to our setup: Mac Mini M4, PyTorch MPS (float32), and the agents/prompts we used. Your results may differ with different hardware, agents, or `program.md` instructions.
+
+**115 experiments sounds impressive, but the agents hit a ceiling at ~1.47.** The [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) fork achieved **1.353** on the same hardware. Here's why we think the gap exists:
+
+1. **Agents repeat failed experiments.** Codex tried `batch_size 2^16` four separate times — it failed every time. It tried `head_dim 64` four times too. A human researcher tries once and moves on. ~11 of 115 experiments were known-bad repeats.
+
+2. **Hyperparameter tuning, not research.** Out of 115 experiments, almost all were knob-turning (learning rates, batch sizes, weight decay). The agent never tried changing the activation function, MLP ratio, removing value embeddings, or modifying the softcap — the kind of architectural changes that drive real breakthroughs.
+
+3. **No memory across experiments.** By experiment 80, the agent has no context of what it tried at experiment 20. The `results.tsv` is there but agents don't systematically analyze patterns in it.
+
+4. **Agents change too many things at once.** Experiment 64 changed batch size, adam betas, AND depth simultaneously. It kept the result, but which change helped? The agent doesn't know.
+
+5. **Float32 tax.** We run in float32 because MPS bfloat16 is unreliable. This is roughly 2x slower than the MLX fork's optimized compute, meaning fewer steps per 5-minute budget regardless of what the agent tries.
+
+**Bottom line:** The agents are good at finding the obvious wins fast (smaller batch, fewer layers) but struggle with the creative leaps that push past local optima. Better `program.md` prompts that guide the agent to try architectural changes and analyze past results could close this gap.
+
 > **Have results to share?** Add your own `examples/your-hardware/` folder and open a PR!
 
 ## Quick start
