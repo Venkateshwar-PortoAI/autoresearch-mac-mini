@@ -54,13 +54,15 @@ We ran experiments on a Mac Mini M4 using different AI agents. Full results, cha
 
 | Hardware | Agent | Experiments | Baseline | Best val_bpb | Improvement | Details |
 |----------|-------|-------------|----------|-------------|-------------|---------|
-| Mac Mini M4 (16GB) | Claude Haiku + Codex | 10 | 1.729 | **1.470** | 15% | [results](examples/mac-mini-m4-haiku/) |
+| Mac Mini M4 (16GB) | OpenAI Codex | 115 | 1.742 | **1.474** | 15.3% | [results](examples/mac-mini-m4-codex/) |
+| Mac Mini M4 (16GB) | Claude Haiku | 10 | 1.729 | **1.470** | 15.0% | [results](examples/mac-mini-m4-haiku/) |
 
-![progress](examples/mac-mini-m4-haiku/progress.png)
+![progress](examples/mac-mini-m4-codex/progress.png)
 
-**Key finding:** On Mac Mini, **smaller models with more optimizer steps win.** The agent discovered that depth 3 beats depth 4 — fewer layers = faster steps = more updates in the 5-minute budget.
-
-**Best config found:** DEPTH=3, TOTAL_BATCH=2^14, WARMDOWN=0.2, WEIGHT_DECAY=0.1
+**Key findings:**
+- **Smaller models win on Mac Mini.** Both agents independently discovered that fewer layers = faster steps = more optimizer updates in the 5-minute budget. Codex went as low as depth 2.
+- **Smaller batches are the biggest lever.** Batch 2^14 or 2^13 beats 2^16 by a large margin.
+- **Haiku found a great config in 10 experiments. Codex explored 115 experiments and found a comparable result.** Different agents, similar conclusions.
 
 > Your results will differ — the agent optimizes for YOUR specific hardware. The [autoresearch-mlx](https://github.com/trevin-creator/autoresearch-mlx) fork pushed val_bpb down to **1.294** on M4 Max over longer runs.
 >

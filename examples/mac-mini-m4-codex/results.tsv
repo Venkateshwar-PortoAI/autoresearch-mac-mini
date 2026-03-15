@@ -1,0 +1,116 @@
+commit	val_bpb	memory_gb	status	description
+cfb8683	1.741578	0.2	keep	baseline
+b475e1b	1.576799	0.2	keep	reduce total batch size to 2^14 and warmdown to 0.2
+c3707eb	1.520681	0.2	keep	reduce depth to 3
+b479181	1.517620	0.2	keep	lower Muon weight decay to 0.1
+529d45d	1.561045	0.2	discard	lower Muon learning rate to 0.03
+a5ec5af	1.515909	0.2	keep	aspect ratio 64->80
+3c1b18a	1.520594	0.2	discard	reduce warmdown to 0.1
+35364e0	1.546372	0.2	discard	lower embedding learning rate to 0.4
+517c3c2	1.536375	0.2	discard	lower scalar learning rate to 0.3
+e2123f0	1.518124	0.2	discard	lower Muon weight decay to 0.05
+2d51c60	1.524210	0.1	discard	reduce depth to 2
+e28432c	1.571671	0.2	discard	aspect ratio 80->64, scalar learning rate 0.5->0.2, warmdown 0.2->0.5
+533f058	1.519972	0.2	discard	scalar learning rate 0.5->0.7
+5dc1505	1.680450	0.2	discard	head dim 128->64, Adam betas (0.8, 0.95)->(0.9, 0.98)
+47be7d5	1.549702	0.2	discard	scalar learning rate 0.5->0.2
+fcf2af8	1.711149	0.2	discard	total batch size 2**14->2**16
+5f9e3ee	0.000000	0.0	crash	total batch size 2**14->2**15, scalar learning rate 0.5->0.2, depth 3->5
+bbd7ac4	1.511629	0.1	keep	device batch size 8->4
+6d018ac	1.579718	0.1	discard	Muon learning rate 0.04->0.02
+dc72b70	1.745775	0.2	discard	head dim 128->64, depth 3->4
+5145951	1.524932	0.1	discard	scalar learning rate 0.5->0.3, Muon weight decay 0.1->0.2
+f217367	1.534704	0.1	discard	scalar learning rate 0.5->0.3
+2ebb45e	1.545671	0.1	discard	embedding learning rate 0.6->0.4
+088c99b	1.540322	0.1	discard	embedding learning rate 0.6->0.5, warmdown 0.2->0.0
+d483283	1.576049	0.1	discard	embedding learning rate 0.6->0.4, Muon learning rate 0.04->0.02
+cb59cc5	1.529466	0.1	discard	warmdown 0.2->0.5
+d65870f	1.651512	0.1	discard	head dim 128->64, total batch size 2**14->2**13
+873807e	1.669251	0.1	discard	head dim 128->64
+f7a6ead	1.665178	0.1	discard	head dim 128->64, final lr frac 0.0->0.1
+c8170b6	1.708654	0.1	discard	total batch size 2**14->2**16
+ca3bad1	1.537736	0.1	discard	scalar learning rate 0.5->0.3, warmdown 0.2->0.3
+6cce38e	1.516155	0.1	discard	Muon weight decay 0.1->0.05
+69e56a9	1.730815	0.2	discard	depth 3->4
+855b522	1.726979	0.1	discard	total batch size 2**14->2**16, Adam betas (0.8, 0.95)->(0.9, 0.95)
+d139104	1.510229	0.1	keep	final lr frac 0.0->0.05
+e2cd9a8	1.706663	0.1	discard	total batch size 2**14->2**16
+67cdb67	1.535258	0.1	discard	warmdown 0.2->0.0
+3c06bf2	1.525631	0.1	discard	Muon learning rate 0.04->0.06
+6599ada	1.516383	0.1	discard	warmdown 0.2->0.1
+9a6ff10	1.570552	0.1	discard	Adam betas (0.8, 0.95)->(0.9, 0.98), warmdown 0.2->0.7
+5aeae60	1.565120	0.1	discard	aspect ratio 80->48, Muon learning rate 0.04->0.06, depth 3->4
+05f204c	1.526966	0.1	discard	window pattern L->SL, embedding learning rate 0.6->0.3, Adam betas (0.8, 0.95)->(0.85, 0.95)
+99ff85e	1.511695	0.1	discard	Muon weight decay 0.1->0.05, final lr frac 0.05->0.1
+d4172d5	1.541158	0.1	discard	embedding learning rate 0.6->0.4
+cfea35e	1.563575	0.1	discard	scalar learning rate 0.5->0.3, warmdown 0.2->0.7
+f0e0ab8	1.728543	0.2	discard	depth 3->4
+1e6abb3	1.637731	0.1	discard	total batch size 2**14->2**15, Muon weight decay 0.1->0.0, Adam betas (0.8, 0.95)->(0.9, 0.95)
+b913ace	1.594262	0.1	discard	window pattern L->SL, total batch size 2**14->2**15
+11deec4	1.557941	0.0	discard	aspect ratio 80->48, depth 3->2
+0a4dc1a	1.506596	0.1	keep	Muon weight decay 0.1->0.2
+2b26dc1	1.508963	0.2	discard	device batch size 4->8
+c8e7ca6	1.593548	0.1	discard	total batch size 2**14->2**15
+adfc0a6	1.712636	0.1	discard	total batch size 2**14->2**16, embedding learning rate 0.6->0.3
+fb32fda	1.691812	0.2	discard	aspect ratio 80->96, embedding learning rate 0.6->0.4
+4b4df81	1.535581	0.1	discard	scalar learning rate 0.5->0.2
+14bc330	1.670806	0.1	discard	head dim 128->64, Muon weight decay 0.2->0.05
+fb95a95	1.535720	0.1	discard	Adam betas (0.8, 0.95)->(0.9, 0.95)
+135b8e2	1.617992	0.1	discard	total batch size 2**14->2**15, depth 3->2
+bc8f1e3	1.705167	0.1	discard	total batch size 2**14->2**16
+6eded1f	1.534808	0.1	discard	aspect ratio 80->48, warmdown 0.2->0.0
+bf6eabd	1.541164	0.1	discard	embedding learning rate 0.6->0.3, Adam betas (0.8, 0.95)->(0.85, 0.95), warmdown 0.2->0.1
+d97f44b	1.538660	0.1	discard	total batch size 2**14->2**13, Muon learning rate 0.04->0.03
+1f82132	1.657508	0.1	discard	head dim 128->64, Adam betas (0.8, 0.95)->(0.9, 0.98)
+06df094	1.539085	0.1	discard	Muon learning rate 0.04->0.06, scalar learning rate 0.5->0.3, warmdown 0.2->0.7
+9bc6433	1.487779	0.1	keep	warmdown 0.2->0.3
+2d47205	1.580725	0.1	discard	total batch size 2**14->2**15
+40e183f	0.000000	0.0	crash	embedding learning rate 0.6->0.8, depth 3->5
+ef8ae74	1.681341	0.1	discard	head dim 128->64, Muon learning rate 0.04->0.02
+7b56a3f	1.487568	0.1	keep	total batch size 2**14->2**13, Adam betas (0.8, 0.95)->(0.85, 0.95), depth 3->2
+b158ccb	1.489541	0.1	discard	final lr frac 0.05->0.1
+f426dd7	1.500028	0.1	discard	aspect ratio 80->96, final lr frac 0.05->0.0
+9450d7a	0.000000	0.0	crash	total batch size 2**13->2**14, depth 2->5
+a46815a	1.576374	0.1	discard	scalar learning rate 0.5->0.2
+bd1a2ab	1.630084	0.0	discard	aspect ratio 80->64, embedding learning rate 0.6->0.4, scalar learning rate 0.5->0.2
+d592984	1.495158	0.1	discard	aspect ratio 80->96
+366a986	1.600873	0.1	discard	head dim 128->64, Adam betas (0.85, 0.95)->(0.8, 0.95)
+ab30569	1.611796	0.1	discard	aspect ratio 80->96, total batch size 2**13->2**15, embedding learning rate 0.6->0.8
+30a34b0	1.509868	0.1	discard	Muon learning rate 0.04->0.02, warmup 0.0->0.02
+c110233	0.000000	0.0	crash	depth 2->5
+7c60626	1.611481	0.1	discard	total batch size 2**13->2**15, Muon weight decay 0.2->0.3, warmdown 0.3->0.5
+1c77eff	1.501293	0.1	discard	warmdown 0.3->0.5
+2d67a4a	1.504470	0.1	discard	Muon learning rate 0.04->0.05, Adam betas (0.85, 0.95)->(0.9, 0.98)
+58e1a4b	1.495303	0.1	discard	window pattern L->SSSL
+ce132b3	1.600699	0.1	discard	head dim 128->64
+3856764	1.510928	0.1	discard	total batch size 2**13->2**14, Muon weight decay 0.2->0.0, Adam betas (0.85, 0.95)->(0.9, 0.98)
+baab597	1.481518	0.1	keep	total batch size 2**13->2**14
+4dc7cfe	1.488409	0.1	discard	device batch size 4->8
+e957bbe	1.591731	0.0	discard	aspect ratio 80->48, head dim 128->64
+01397d7	1.499355	0.1	discard	depth 2->3
+34ba636	1.516019	0.1	discard	Muon weight decay 0.2->0.0
+3522ac0	1.523679	0.1	discard	Muon weight decay 0.2->0.0, warmdown 0.3->0.1
+0af35ac	1.492317	0.1	discard	scalar learning rate 0.5->0.7
+92d0de6	1.565463	0.1	discard	total batch size 2**14->2**15, scalar learning rate 0.5->0.3
+3a8afb3	1.599470	0.1	discard	total batch size 2**14->2**15
+1353835	1.555999	0.1	discard	head dim 128->64
+22b12fa	1.486973	0.1	discard	Muon learning rate 0.04->0.05, scalar learning rate 0.5->0.7
+ca4971a	1.493563	0.1	discard	scalar learning rate 0.5->0.3, device batch size 4->8
+e8cd570	1.484150	0.1	discard	window pattern L->SL, final lr frac 0.05->0.1, device batch size 4->8
+64fe2cf	1.477826	0.1	keep	window pattern L->SL
+5c5a531	1.496153	0.1	discard	total batch size 2**14->2**13, embedding learning rate 0.6->0.3
+815a000	1.539544	0.1	discard	Muon learning rate 0.04->0.02, warmdown 0.3->0.5
+25f1b84	1.532863	0.1	discard	head dim 128->64, scalar learning rate 0.5->0.7
+2273822	1.641213	0.1	discard	total batch size 2**14->2**16, Muon learning rate 0.04->0.06, Adam betas (0.85, 0.95)->(0.9, 0.95)
+497e281	1.474309	0.1	keep	total batch size 2**14->2**13
+042f76a	1.782172	0.2	discard	total batch size 2**13->2**15, depth 2->4
+2c97780	1.521873	0.1	discard	head dim 128->64
+a5a2326	1.492129	0.1	discard	scalar learning rate 0.5->0.2, warmdown 0.3->0.2
+e9b2380	1.491659	0.1	discard	Muon learning rate 0.04->0.03, scalar learning rate 0.5->0.7
+aa907c0	0.000000	0.0	crash	aspect ratio 80->96, head dim 128->64, depth 2->5
+f1579c3	1.481562	0.1	discard	total batch size 2**13->2**14, Adam betas (0.85, 0.95)->(0.9, 0.98)
+9ed404b	1.540403	0.1	discard	warmdown 0.3->0.0
+b7134db	1.541869	0.1	discard	Muon learning rate 0.04->0.02
+8d18716	1.487505	0.1	discard	Muon weight decay 0.2->0.1
+53d1d90	1.600665	0.1	discard	total batch size 2**13->2**15
+b0d5a28	1.539325	0.1	discard	head dim 128->64, Muon learning rate 0.04->0.05
